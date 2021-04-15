@@ -28,3 +28,5 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+delete_option( 'bh_wc_gateway_load_balancer_config' );

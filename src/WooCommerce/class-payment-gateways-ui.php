@@ -19,6 +19,11 @@ use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
 
+/**
+ * Class Payment_Gateways_UI
+ *
+ * @package BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce
+ */
 class Payment_Gateways_UI {
 
 	use LoggerAwareTrait;
@@ -45,7 +50,7 @@ class Payment_Gateways_UI {
 	 * @hooked woocommerce_get_sections_checkout
 	 * @see \WC_Settings_Payment_Gateways::get_sections()
 	 *
-	 * @param array<string, string> $sections
+	 * @param array<string, string> $sections The horizontal sections for the current WC_Settings_Page section.
 	 * @return array<string, string>
 	 */
 	public function add_settings_section( array $sections ): array {
@@ -60,8 +65,8 @@ class Payment_Gateways_UI {
 	 * @hooked woocommerce_get_settings_checkout
 	 * @see \WC_Settings_Payment_Gateways::get_settings()
 	 *
-	 * @param array<string|int, array<string,mixed>> $settings
-	 * @param string                                 $current_section
+	 * @param array<string|int, array<string,mixed>> $settings The settings set to be displayed.
+	 * @param string                                 $current_section The current settings tab's section in the horizontal list.
 	 *
 	 * @return array<string|int, array<string,mixed>>
 	 */
@@ -72,7 +77,7 @@ class Payment_Gateways_UI {
 				$settings = array(
 					array(
 						'title'     => __( 'Load Balancing', 'bh-wc-gateway-load-balancer' ),
-						'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day.', 'bh-wc-gateway-load-balancer' ),
+						'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day. Only one gateway from the group will appear to customers at a time. Remaining gateways are unaffected.', 'bh-wc-gateway-load-balancer' ),
 						'type'      => 'title',
 						'id'        => 'bh_wc_gateway_load_balancer_options',
 						'is_option' => false,
@@ -101,12 +106,13 @@ class Payment_Gateways_UI {
 	 * @hooked woocommerce_admin_field_bh_wc_gateway_load_balancer
 	 * @see \WC_Admin_Settings::output_fields()
 	 *
-	 * @param array<string, mixed> $value
+	 * @param array<string, mixed> $value The get_settings() configuration with the saved $value in its `value` key.
 	 */
 	public function print_bh_wc_gateway_load_balancer_setting( array $value ): void {
 
 		/**
-		 * gateway_id, ratio.
+		 * The saved settings in `$value['value']` is an array with {included: {gateway_id: on}} and
+		 * {ratio: {gateway_id: int}}.
 		 *
 		 * @var array{included: array<string, string>, ratio: array<string, int>}
 		 */
@@ -246,7 +252,7 @@ class Payment_Gateways_UI {
 	 * @see \WC_Admin_Settings::save_fields()
 	 *
 	 * @param mixed                $value The $_POST['bh_wc_gateway_load_balancer_config'] value.
-	 * @param array<string, mixed> $option The settings element from get_settings() above.
+	 * @param array<string, mixed> $option The `bh_wc_gateway_load_balancer_config` settings element from get_settings() above.
 	 * @param mixed                $raw_value The $_POST['bh_wc_gateway_load_balancer_config'] before it was run through wc_clean().
 	 *
 	 * @return array{included: array<string, string>, ratio: array<string, string>} The data to be saved.

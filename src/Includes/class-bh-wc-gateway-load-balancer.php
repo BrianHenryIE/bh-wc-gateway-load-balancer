@@ -37,8 +37,18 @@ class BH_WC_Gateway_Load_Balancer {
 
 	use LoggerAwareTrait;
 
+	/**
+	 * The settings instance to pass to new objects.
+	 *
+	 * @var Settings_Interface
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * The API instance to pass to new objects.
+	 *
+	 * @var API_Interface
+	 */
 	protected API_Interface $api;
 
 	/**
@@ -49,6 +59,10 @@ class BH_WC_Gateway_Load_Balancer {
 	 * the frontend-facing side of the site.
 	 *
 	 * @since    1.0.0
+	 *
+	 * @param API_Interface      $api The main plugin functions.
+	 * @param Settings_Interface $settings The plugin's settings.
+	 * @param LoggerInterface    $logger PSR logger.
 	 */
 	public function __construct( API_Interface $api, Settings_Interface $settings, LoggerInterface $logger ) {
 

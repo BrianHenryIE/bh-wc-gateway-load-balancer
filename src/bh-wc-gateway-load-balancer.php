@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Gateway Load Balancer
  * Plugin URI:        http://github.com/BrianHenryIE/bh-wc-gateway-load-balancer/
- * Description:       Weighted load balancer for WooCommerce payment gateways: decides one gateway at a time to display customers, rotates through group of gateways based on ratios specified in settings.
+ * Description:       Weighted load balancer for WooCommerce payment gateways: decides one gateway at a time to display to customers, rotates through group of gateways based on ratios of orders' totals specified in settings.
  * Version:           1.0.0
  * Author:            BrianHenryIE
  * Author URI:        https://BrianHenryIE.com/
@@ -34,13 +34,15 @@ use BrianHenryIE\WC_Gateway_Load_Balancer\BrianHenryIE\WP_Logger\Logger;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\Activator;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\Deactivator;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Pablo_Pacheco\WP_Namespace_Autoloader\WP_Namespace_Autoloader;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'autoload.php';
+
+require_once __DIR__ . '/autoload.php';
 
 /**
  * Current plugin version.

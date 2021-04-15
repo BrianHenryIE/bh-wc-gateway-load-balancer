@@ -15,12 +15,27 @@ use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
 
+/**
+ * Class Payment_Gateways
+ *
+ * @package BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce
+ */
 class Payment_Gateways {
 
 	use LoggerAwareTrait;
 
+	/**
+	 * Used to get the configuration for load balancing.
+	 *
+	 * @var Settings_Interface The plugin's settings.
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * Used to determine which gateway to use.
+	 *
+	 * @var API_Interface The plugin's main functions.
+	 */
 	protected API_Interface $api;
 
 	/**
@@ -39,7 +54,7 @@ class Payment_Gateways {
 	/**
 	 * Given a list of gateways, checks for any set to load balance, checks which gateways should be removed.
 	 *
-	 * TODO: Where should this run? Checkout... anywhere else? Is order payment page 'checkout' too?
+	 * TODO: Where should this run? Checkout... anywhere else? Is "customer order payment page" 'checkout' too?
 	 *
 	 * @hooked woocommerce_available_payment_gateways
 	 * @see \WC_Payment_Gateways::get_available_payment_gateways()

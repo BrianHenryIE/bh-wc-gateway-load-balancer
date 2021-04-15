@@ -18,6 +18,11 @@ use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
 use WC_Order;
 
+/**
+ * Class Order
+ *
+ * @package BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce
+ */
 class Order {
 
 	use LoggerAwareTrait;
@@ -61,7 +66,7 @@ class Order {
 		$payment_method_id = $order->get_payment_method();
 		$payment_amount    = floatval( $order->get_total() );
 
-		$this->logger->info( "Adding payment amount {$payment_amount} for gateway {$payment_method_id}" );
+		$this->logger->info( "Recording payment amount {$payment_amount} for gateway {$payment_method_id}" );
 
 		$this->api->record_payment( $payment_method_id, $payment_amount );
 

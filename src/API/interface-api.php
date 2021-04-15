@@ -9,6 +9,11 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
+/**
+ * Interface API_Interface
+ *
+ * @package BrianHenryIE\WC_Gateway_Load_Balancer\API
+ */
 interface API_Interface {
 
 	/**
@@ -20,8 +25,8 @@ interface API_Interface {
 	/**
 	 * Checks gateways totals for recent orders (one day) and chooses which gateway should be used.
 	 *
-	 * @param array<string, int> $available_gateways The gateway id and ratio it should be used.
+	 * @param array<string, int> $available_gateway_ratios The gateway id and ratio it should be used.
 	 * @return string The chosen gateway id.
 	 */
-	public function determine_chosen_gateway( array $available_gateways ): string;
+	public function determine_chosen_gateway( array $available_gateway_ratios ): string;
 }

@@ -1,5 +1,10 @@
 <?php
 /**
+ * The plugin's main functions.
+ *
+ * * Record payments.
+ * * Determine which gateway to show customers based on recorded payments.
+ *
  * @link              https://BrianHenryIE.com
  * @since             1.0.0
  * @package           BH_WC_Gateway_Load_Balancer
@@ -11,19 +16,43 @@ namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
 
+/**
+ * Class API
+ *
+ * @package BrianHenryIE\WC_Gateway_Load_Balancer\API
+ */
 class API implements API_Interface {
 
 	use LoggerAwareTrait;
 
 	const RECENT_VALUES_OPTION_NAME = 'bh_wc_load_balancer_gateways_running_totals';
 
+	/**
+	 * Used to get the time-period the orders' totals should be counted against.
+	 *
+	 * @var Settings_Interface The plugin's settings.
+	 */
 	protected Settings_Interface $settings;
 
+	/**
+	 * API constructor.
+	 *
+	 * @param Settings_Interface $settings The plugin's settings.
+	 * @param LoggerInterface    $logger PSR logger.
+	 */
 	public function __construct( Settings_Interface $settings, LoggerInterface $logger ) {
 		$this->setLogger( $logger );
 		$this->settings = $settings;
 	}
 
+	/**
+	 * Record the payment for the gateway.
+	 *
+	 * Deletes expired records from the list of saved payments.
+	 *
+	 * @param string $payment_method_id The gateway id.
+	 * @param float  $payment_amount The paid order amount.
+	 */
 	public function record_payment( string $payment_method_id, float $payment_amount ): void {
 
 		$since_time = time() - $this->settings->get_period();
@@ -44,11 +73,10 @@ class API implements API_Interface {
 		);
 
 		update_option( self::RECENT_VALUES_OPTION_NAME, $filtered_since_time );
-
 	}
 
 	/**
-	 * Get a saved list of time:{gateway, amount}
+	 * Get a saved list of {time:{gateway: amount}} for summing.
 	 *
 	 * @return array<int, array{gateway_id:string, amount: float}>
 	 */
@@ -60,9 +88,11 @@ class API implements API_Interface {
 	}
 
 	/**
-	 * gateway_id => amount
+	 * Get a list of payment gateways and their order totals since the time specified.
 	 *
-	 * @return array<string, float>
+	 * @param int $since_time Unix time to count order totals since.
+	 *
+	 * @return array<string, float> The gateway_id and its summed total.
 	 */
 	protected function get_existing_totals( int $since_time ): array {
 
@@ -90,29 +120,32 @@ class API implements API_Interface {
 	}
 
 	/**
+	 * Give a list of payment gateways and the ratio they should be used in, this function gets their recent
+	 * orders' totals and determines which gateway should be shown to the customer.
 	 *
-	 * @param array<string, int> $available_gateways The gateway id and proportion it should be used.
+	 * @param array<string, int> $available_gateway_ratios The gateway id and ratio it should be used.
 	 * @return string The chosen gateway id.
+	 * @throws \Exception When no gateways are provided, none can be returned.
 	 */
-	public function determine_chosen_gateway( array $available_gateways ): string {
+	public function determine_chosen_gateway( array $available_gateway_ratios ): string {
 
-		if ( 0 === count( $available_gateways ) ) {
+		if ( 0 === count( $available_gateway_ratios ) ) {
 			throw new \Exception( 'No gateways passed to function.' );
 		}
 
-		if ( 1 === count( $available_gateways ) ) {
-			return array_key_first( $available_gateways );
+		if ( 1 === count( $available_gateway_ratios ) ) {
+			return array_key_first( $available_gateway_ratios );
 		}
 
 		$since_time = time() - $this->settings->get_period();
 
 		$totals = $this->get_existing_totals( $since_time );
 
-		$ratios_total = array_sum( $available_gateways );
+		$ratios_total = array_sum( $available_gateway_ratios );
 
 		$adjusted_totals = array();
 
-		foreach ( $available_gateways as $gateway_id => $ratio ) {
+		foreach ( $available_gateway_ratios as $gateway_id => $ratio ) {
 			if ( ! isset( $totals[ $gateway_id ] ) ) {
 				$totals[ $gateway_id ] = 0.0;
 			}
