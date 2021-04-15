@@ -6,9 +6,9 @@
  * @author     BrianHenryIE <BrianHenryIE@gmail.com>
  */
 
-namespace BH_WC_Gateway_Load_Balancer;
+namespace BrianHenryIE\WC_Gateway_Load_Balancer;
 
-use BH_WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
 
 /**
  * Verifies the plugin has been instantiated and added to PHP's $GLOBALS variable.

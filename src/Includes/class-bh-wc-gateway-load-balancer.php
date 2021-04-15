@@ -5,17 +5,22 @@
  * A class definition that includes attributes and functions used across both the
  * frontend-facing side of the site and the admin area.
  *
- * @link       http://example.com
+ * @link       https://BrianHenryIE.com
  * @since      1.0.0
  *
  * @package    BH_WC_Gateway_Load_Balancer
  * @subpackage BH_WC_Gateway_Load_Balancer/includes
  */
 
-namespace BH_WC_Gateway_Load_Balancer\Includes;
+namespace BrianHenryIE\WC_Gateway_Load_Balancer\Includes;
 
-use BH_WC_Gateway_Load_Balancer\Admin\Admin;
-use BH_WC_Gateway_Load_Balancer\Frontend\Frontend;
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Order;
+use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Payment_Gateways;
+use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Payment_Gateways_UI;
 
 /**
  * The core plugin class.
@@ -23,15 +28,18 @@ use BH_WC_Gateway_Load_Balancer\Frontend\Frontend;
  * This is used to define internationalization, admin-specific hooks, and
  * frontend-facing site hooks.
  *
- * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
- *
- * @since      1.0.0
- * @package    BH_WC_Gateway_Load_Balancer
- * @subpackage BH_WC_Gateway_Load_Balancer/includes
- * @author     BrianHenryIE <BrianHenryIE@gmail.com>
+ * @link              https://BrianHenryIE.com
+ * @since             1.0.0
+ * @package           BH_WC_Gateway_Load_Balancer
+ * @license           GPL-v2.0+
  */
 class BH_WC_Gateway_Load_Balancer {
+
+	use LoggerAwareTrait;
+
+	protected Settings_Interface $settings;
+
+	protected API_Interface $api;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -42,12 +50,17 @@ class BH_WC_Gateway_Load_Balancer {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
+	public function __construct( API_Interface $api, Settings_Interface $settings, LoggerInterface $logger ) {
+
+		$this->setLogger( $logger );
+		$this->settings = $settings;
+		$this->api      = $api;
 
 		$this->set_locale();
-		$this->define_admin_hooks();
-		$this->define_frontend_hooks();
 
+		$this->define_order_hooks();
+		$this->define_payment_gateway_hooks();
+		$this->define_payment_gateway_ui_hooks();
 	}
 
 	/**
@@ -64,39 +77,46 @@ class BH_WC_Gateway_Load_Balancer {
 		$plugin_i18n = new I18n();
 
 		add_action( 'plugins_loaded', array( $plugin_i18n, 'load_plugin_textdomain' ) );
-
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
+	 * Register actions to record order values by gateway when orders are paid.
 	 *
 	 * @since    1.0.0
-	 * @access   private
 	 */
-	protected function define_admin_hooks(): void {
+	protected function define_order_hooks(): void {
 
-		$plugin_admin = new Admin();
+		$order = new Order( $this->api, $this->logger );
 
-		add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $plugin_admin, 'enqueue_scripts' ) );
-
+		add_action( 'woocommerce_payment_complete', array( $order, 'update_gateways_running_totals' ) );
 	}
 
 	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
+	 * Payment gateway hooks: filter the payment gateways based on the configured settings.
 	 *
 	 * @since    1.0.0
-	 * @access   private
 	 */
-	protected function define_frontend_hooks(): void {
+	protected function define_payment_gateway_hooks(): void {
 
-		$plugin_frontend = new Frontend();
+		$payment_gateways = new Payment_Gateways( $this->api, $this->settings, $this->logger );
 
-		add_action( 'wp_enqueue_scripts', array( $plugin_frontend, 'enqueue_styles' ) );
-		add_action( 'wp_enqueue_scripts', array( $plugin_frontend, 'enqueue_scripts' ) );
+		add_filter( 'woocommerce_available_payment_gateways', array( $payment_gateways, 'load_balance_gateways' ), 200, 1 );
+	}
 
+	/**
+	 * Register the hooks and filters for the settings screen.
+	 *
+	 * @since    1.0.0
+	 */
+	protected function define_payment_gateway_ui_hooks(): void {
+
+		$payment_gateways_ui = new Payment_Gateways_UI( $this->settings, $this->logger );
+
+		add_filter( 'woocommerce_get_sections_checkout', array( $payment_gateways_ui, 'add_settings_section' ) );
+		add_filter( 'woocommerce_get_settings_checkout', array( $payment_gateways_ui, 'get_settings' ), 10, 2 );
+		add_action( 'woocommerce_admin_field_bh_wc_gateway_load_balancer', array( $payment_gateways_ui, 'print_bh_wc_gateway_load_balancer_setting' ) );
+		add_filter( 'woocommerce_admin_settings_sanitize_option_bh_wc_gateway_load_balancer_config', array( $payment_gateways_ui, 'process_config' ), 10, 3 );
+		add_action( 'admin_enqueue_scripts', array( $payment_gateways_ui, 'add_checkbox_js' ) );
 	}
 
 }

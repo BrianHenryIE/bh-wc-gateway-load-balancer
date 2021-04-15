@@ -89,7 +89,7 @@
             }
         },
         "mozart": {
-            "dep_namespace": "BH_WC_Gateway_Load_Balancer\\",
+            "dep_namespace": "BrianHenryIE\\WC_Gateway_Load_Balancer\\",
             "dep_directory": "/src/strauss/",
             "classmap_prefix": "BH_WC_Gateway_Load_Balancer_",
             "delete_vendor_directories": false

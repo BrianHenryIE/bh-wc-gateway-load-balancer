@@ -7,28 +7,33 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://example.com
+ * @link              https://BrianHenryIE.com
  * @since             1.0.0
  * @package           BH_WC_Gateway_Load_Balancer
+ * @license           GPL-v2.0+
  *
  * @wordpress-plugin
- * Plugin Name:       BH WC Gateway Load Balancer
- * Plugin URI:        http://github.com/username/bh-wc-gateway-load-balancer/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Plugin Name:       Gateway Load Balancer
+ * Plugin URI:        http://github.com/BrianHenryIE/bh-wc-gateway-load-balancer/
+ * Description:       Weighted load balancer for WooCommerce payment gateways: decides one gateway at a time to display customers, rotates through group of gateways based on ratios specified in settings.
  * Version:           1.0.0
  * Author:            BrianHenryIE
- * Author URI:        http://example.com/
+ * Author URI:        https://BrianHenryIE.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       bh-wc-gateway-load-balancer
  * Domain Path:       /languages
  */
 
-namespace BH_WC_Gateway_Load_Balancer;
+namespace BrianHenryIE\WC_Gateway_Load_Balancer;
 
-use BH_WC_Gateway_Load_Balancer\Includes\Activator;
-use BH_WC_Gateway_Load_Balancer\Includes\Deactivator;
-use BH_WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\API;
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings;
+use BrianHenryIE\WC_Gateway_Load_Balancer\BrianHenryIE\WP_Logger\Logger;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\Activator;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\Deactivator;
+use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -48,23 +53,23 @@ define( 'BH_WC_GATEWAY_LOAD_BALANCER_VERSION', '1.0.0' );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-activator.php
  */
-function activate_bh_wc_gateway_load_balancer(): void {
-
-	Activator::activate();
-}
+register_activation_hook(
+	__FILE__,
+	function() {
+		Activator::activate();
+	}
+);
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-deactivator.php
  */
-function deactivate_bh_wc_gateway_load_balancer(): void {
-
-	Deactivator::deactivate();
-}
-
-register_activation_hook( __FILE__, 'BH_WC_Gateway_Load_Balancer\activate_bh_wc_gateway_load_balancer' );
-register_deactivation_hook( __FILE__, 'BH_WC_Gateway_Load_Balancer\deactivate_bh_wc_gateway_load_balancer' );
-
+register_deactivation_hook(
+	__FILE__,
+	function() {
+		Deactivator::deactivate();
+	}
+);
 
 /**
  * Begins execution of the plugin.
@@ -75,15 +80,20 @@ register_deactivation_hook( __FILE__, 'BH_WC_Gateway_Load_Balancer\deactivate_bh
  *
  * @since    1.0.0
  */
-function instantiate_bh_wc_gateway_load_balancer(): BH_WC_Gateway_Load_Balancer {
+function instantiate_bh_wc_gateway_load_balancer(): API_Interface {
 
-	$plugin = new BH_WC_Gateway_Load_Balancer();
+	$settings = new Settings();
+	$logger   = Logger::instance( $settings );
+	$api      = new API( $settings, $logger );
 
-	return $plugin;
+	new BH_WC_Gateway_Load_Balancer( $api, $settings, $logger );
+
+	return $api;
 }
 
 /**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and frontend-facing site hooks.
+ * The plugins' primary methods.
+ *
+ * @var API_Interface $GLOBALS['bh_wc_gateway_load_balancer']
  */
-$GLOBALS['bh_wc_gateway_load_balancer'] = $bh_wc_gateway_load_balancer = instantiate_bh_wc_gateway_load_balancer();
+$GLOBALS['bh_wc_gateway_load_balancer'] = instantiate_bh_wc_gateway_load_balancer();
