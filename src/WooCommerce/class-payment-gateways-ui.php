@@ -268,8 +268,24 @@ class Payment_Gateways_UI {
 			}
 		);
 
-		// TODO: What to do when toggle is enabled but ratio is empty
-		// TODO if all ratios are empty, go 50:50.
+		$active_ratio = array_filter(
+			$ratio,
+			function ( $key ) use ( $included ) {
+				return array_key_exists( $key, $included );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		// If not all enabled gateways have a ratio number set.
+		if ( count( $included ) !== count( $active_ratio ) ) {
+			$default = array_sum( $active_ratio ) / count( $active_ratio );
+
+			foreach ( $included as $gateway_id => $_ ) {
+				if ( ! isset( $ratio[ $gateway_id ] ) ) {
+					$ratio[ $gateway_id ] = $default;
+				}
+			}
+		}
 
 		return array(
 			'included' => $included,
