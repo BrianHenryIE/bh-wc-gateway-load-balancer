@@ -16,7 +16,7 @@
  * Plugin Name:       Gateway Load Balancer
  * Plugin URI:        http://github.com/BrianHenryIE/bh-wc-gateway-load-balancer/
  * Description:       Weighted load balancer for WooCommerce payment gateways: decides one gateway at a time to display to customers, rotates through group of gateways based on ratios of orders' totals specified in settings.
- * Version:           1.0.0
+ * Version:           1.2.0
  * Author:            BrianHenryIE
  * Author URI:        https://BrianHenryIE.com/
  * License:           GPL-2.0+
@@ -49,7 +49,7 @@ require_once __DIR__ . '/autoload.php';
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'BH_WC_GATEWAY_LOAD_BALANCER_VERSION', '1.0.0' );
+define( 'BH_WC_GATEWAY_LOAD_BALANCER_VERSION', '1.2.0' );
 
 /**
  * The code that runs during plugin activation.
