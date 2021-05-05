@@ -70,7 +70,7 @@ jobs:
       - name: Create wpconfig ... the composer.json creation didn't work
         run: |
           export $(grep -v '^#' .env.testing | xargs);
-          sudo vendor/bin/wp config create --dbname=$TEST_SITE_DB_NAME --dbuser=$TEST_SITE_DB_USER --dbpass=$TEST_SITE_DB_PASSWORD --dbhost=127.0.0.1:${{ job.services.mysql.ports['3306'] }} --allow-root
+          sudo vendor/bin/wp config create --dbname=$TEST_SITE_DB_NAME --dbuser=$TEST_SITE_DB_USER --dbpass=$TEST_SITE_DB_PASSWORD --dbhost=127.0.0.1:${{ job.services.mysql.ports['3306'] }} --allow-root --extra-php="define( 'WP_DEBUG', true ); define( 'WP_DEBUG_LOG', true );  define( 'WP_CONTENT_DIR', '$(pwd)/wordpress' );"
 
       - name: Start webserver
         run: |
