@@ -89,5 +89,6 @@ jobs:
             tests/_output/*fail.html
             composer.json
             wordpress/wp-config.php
+            wordpress/wp-content/*.log
             .env.testing
             tests/_data/dump.sql
