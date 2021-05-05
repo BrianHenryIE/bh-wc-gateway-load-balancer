@@ -1,6 +1,13 @@
-[![WordPress tested 5.5](https://img.shields.io/badge/WordPress-v5.5%20tested-0073aa.svg)](https://wordpress.org/plugins/plugin_slug) [![PHPCS WPCS](https://img.shields.io/badge/PHPCS-WordPress%20Coding%20Standards-8892BF.svg)](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards) [![PHPUnit ](.github/coverage.svg)](https://brianhenryie.github.io/plugin_slug/)
+[![WordPress tested 5.7](https://img.shields.io/badge/WordPress-v5.7%20tested-0073aa.svg)](https://wordpress.org/plugins/bh-wc-checkout-rate-limiter) [![PHPCS WPCS](https://img.shields.io/badge/PHPCS-WordPress%20Coding%20Standards-8892BF.svg)](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards) [![PHPStan ](.github/phpstan.svg)](https://github.com/szepeviktor/phpstan-wordpress)  [![PHPUnit ](.github/coverage.svg)](https://brianhenryie.github.io/bh-wc-checkout-rate-limiter/)
 
-# BH WC Gateway Load Balancer
+# Gateway Load Balancer
+
+Split orders across multiple payment gateways in WooCommerce. 
+
+Choose a group of payment gateways where only one gateway will be displayed at a time, and set a ratio the payments should be balanced across, thus when a customer reaches checkout the gateway with proportionate lowest amount processed in the past 24 hours will be displayed to the customer.
+
+![Settings page](./assets/screenshot-1.png "Configure the rate limiting across gateways")
+
 
 ## Contributing
 
@@ -22,6 +29,7 @@ mysql_password="secret"
 
 # Make .env available to bash.
 export $(grep -v '^#' .env.testing | xargs)
+source .env.testing
 
 # Create the databases.
 mysql -u $mysql_username -p$mysql_password -e "CREATE USER '"$TEST_DB_USER"'@'%' IDENTIFIED WITH mysql_native_password BY '"$TEST_DB_PASSWORD"';";
