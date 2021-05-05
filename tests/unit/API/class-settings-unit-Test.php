@@ -35,4 +35,38 @@ class Settings_Unit_Test extends Unit {
         $this->assertIsArray(  $result );
         $this->assertEmpty( $result );
     }
+
+    public function test_get_loglevel_returns_notice_default() {
+
+        \WP_Mock::userFunction(
+            'get_option',
+            array(
+                'args' => array( 'bh_wc_gateway_load_balancer_log_level',  \WP_Mock\Functions::type( 'string' )),
+                'return_arg' => 1
+            )
+        );
+
+        $sut = new Settings();
+
+        $result = $sut->get_log_level();
+
+        $this->assertEquals( 'notice', $result );
+    }
+
+    public function test_get_loglevel_returns_option_when_specified() {
+
+        \WP_Mock::userFunction(
+            'get_option',
+            array(
+                'args' => array( 'bh_wc_gateway_load_balancer_log_level',  \WP_Mock\Functions::type( 'string' )),
+                'return' => 'debug'
+            )
+        );
+
+        $sut = new Settings();
+
+        $result = $sut->get_log_level();
+
+        $this->assertEquals( 'debug', $result );
+    }
 }

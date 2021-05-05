@@ -69,6 +69,14 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
             )
         );
 
+        \WP_Mock::userFunction(
+            'get_option',
+            array(
+                'args' => array( 'bh_wc_gateway_load_balancer_log_level',  \WP_Mock\Functions::type( 'string' )),
+                'return' => 'notice'
+            )
+        );
+
 		require_once $plugin_root_dir . '/bh-wc-gateway-load-balancer.php';
 
 		$this->assertArrayHasKey( 'bh_wc_gateway_load_balancer', $GLOBALS );

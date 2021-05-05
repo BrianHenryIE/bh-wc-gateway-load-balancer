@@ -48,7 +48,10 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	 * @return string
 	 */
 	public function get_log_level(): string {
-		return LogLevel::DEBUG;
+		$default = LogLevel::NOTICE;
+		$config  = get_option( 'bh_wc_gateway_load_balancer_log_level', $default );
+
+		return $config;
 	}
 
 	/**

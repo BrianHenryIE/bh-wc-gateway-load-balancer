@@ -75,23 +75,41 @@ class Payment_Gateways_UI {
 
 		if ( 'bh_wc_gateway_load_balancer' === $current_section ) {
 
-				$settings = array(
-					array(
-						'title'     => __( 'Load Balancing', 'bh-wc-gateway-load-balancer' ),
-						'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day. Only one gateway from the group will appear to customers at a time. Remaining gateways are unaffected.', 'bh-wc-gateway-load-balancer' ),
-						'type'      => 'title',
-						'id'        => 'bh_wc_gateway_load_balancer_options',
-						'is_option' => false,
-					),
-					array(
-						'id'   => 'bh_wc_gateway_load_balancer_config',
-						'type' => 'bh_wc_gateway_load_balancer',
-					),
-					array(
-						'type'      => 'sectionend',
-						'id'        => 'bh_wc_gateway_load_balancer_options',
-						'is_option' => false,
-					),
+				$settings[] = array(
+					'title'     => __( 'Load Balancing', 'bh-wc-gateway-load-balancer' ),
+					'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day. Only one gateway from the group will appear to customers at a time. Remaining gateways are unaffected.', 'bh-wc-gateway-load-balancer' ),
+					'type'      => 'title',
+					'id'        => 'bh_wc_gateway_load_balancer_options',
+					'is_option' => false,
+				);
+
+				$settings[] = array(
+					'id'   => 'bh_wc_gateway_load_balancer_config',
+					'type' => 'bh_wc_gateway_load_balancer',
+				);
+
+				// TODO: Don't offer levels that aren't used by the plugin.
+				$log_levels        = array( 'none', LogLevel::ERROR, LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG );
+				$log_levels_option = array();
+				foreach ( $log_levels as $log_level ) {
+					$log_levels_option[ $log_level ] = ucfirst( $log_level );
+				}
+
+				$settings[] = array(
+					'title'    => __( 'Log Level', 'text-domain' ),
+					'label'    => __( 'Enable Logging', 'text-domain' ),
+					'type'     => 'select',
+					'options'  => $log_levels_option,
+					'desc'     => __( 'Increasingly detailed logging.', 'text-domain' ),
+					'desc_tip' => true,
+					'default'  => 'notice',
+					'id'       => 'bh_wc_gateway_load_balancer_log_level',
+				);
+
+				$settings[] = array(
+					'type'      => 'sectionend',
+					'id'        => 'bh_wc_gateway_load_balancer_options',
+					'is_option' => false,
 				);
 
 		}
