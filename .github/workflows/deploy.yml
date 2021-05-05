@@ -9,8 +9,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php: [ '7.4' ]
+
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@2.11.0
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, cs2pr
+
       - uses: php-actions/composer@master
       - name: Deploy
         run: chmod +x ./.github/deploy.sh && ./.github/deploy.sh
