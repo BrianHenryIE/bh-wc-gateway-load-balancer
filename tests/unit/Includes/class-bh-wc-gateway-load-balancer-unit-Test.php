@@ -6,6 +6,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\Includes;
 
+use BrianHenryIE\WC_Gateway_Load_Balancer\Admin\Plugins_Page;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
 use Psr\Log\NullLogger;
@@ -114,6 +115,18 @@ class BH_WC_Gateway_Load_Balancer_Unit_Test extends \Codeception\Test\Unit {
         $this->construct_sut();
     }
 
+    /**
+     * @covers ::define_plugins_page_hooks
+     */
+    protected function test_plugins_page_hooks() {
+
+        \WP_Mock::expectActionAdded(
+            'plugin_action_links_bh-wc-gateway-load-balancer/bh-wc-gateway-load-balancer.php',
+            array( new AnyInstance( Plugins_Page::class ), 'action_links' )
+        );
+
+        $this->construct_sut();
+    }
 
     protected function construct_sut() {
 

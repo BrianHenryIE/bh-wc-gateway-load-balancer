@@ -14,6 +14,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\Includes;
 
+use BrianHenryIE\WC_Gateway_Load_Balancer\Admin\Plugins_Page;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
 use Psr\Log\LoggerAwareTrait;
@@ -133,4 +134,12 @@ class BH_WC_Gateway_Load_Balancer {
 		add_action( 'admin_enqueue_scripts', array( $payment_gateways_ui, 'add_checkbox_js' ) );
 	}
 
+	/**
+	 * Add a link to settings in plugins.php.
+	 */
+	protected function define_plugins_page_hooks(): void {
+		$plugins_page = new Plugins_Page();
+
+		add_filter( 'plugin_action_links_bh-wc-gateway-load-balancer/bh-wc-gateway-load-balancer.php', array( $plugins_page, 'action_links' ) );
+	}
 }
