@@ -1,7 +1,6 @@
 name: Run PHP CodeSniffer
 
-# Run PHPCBF to fix changes then PHPCS with GitHubActionsAnnotations report
-# https://github.com/squizlabs/PHP_CodeSniffer/pull/2918
+# Run PHPCBF to fix changes then PHPCS report
 #
 # NB: Pull requests from forks do not have access to repository secrets so cannot commit changes.
 #
