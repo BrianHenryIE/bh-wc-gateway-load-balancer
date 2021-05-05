@@ -13,8 +13,8 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class API

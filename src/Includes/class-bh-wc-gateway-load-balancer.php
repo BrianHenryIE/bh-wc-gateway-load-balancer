@@ -16,8 +16,8 @@ namespace BrianHenryIE\WC_Gateway_Load_Balancer\Includes;
 
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Order;
 use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Payment_Gateways;
 use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Payment_Gateways_UI;

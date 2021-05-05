@@ -3,7 +3,7 @@
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce;
 
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\NullLogger;
+use Psr\Log\NullLogger;
 use Codeception\Test\Unit;
 
 /**

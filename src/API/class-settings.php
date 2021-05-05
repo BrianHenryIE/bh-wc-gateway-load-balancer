@@ -11,7 +11,7 @@
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
 use BrianHenryIE\WC_Gateway_Load_Balancer\BrianHenryIE\WP_Logger\API\Logger_Settings_Interface;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LogLevel;
+use Psr\Log\LogLevel;
 
 /**
  * Class Settings

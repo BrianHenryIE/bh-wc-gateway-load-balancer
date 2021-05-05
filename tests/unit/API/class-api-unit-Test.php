@@ -2,7 +2,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\NullLogger;
+use Psr\Log\NullLogger;
 use Codeception\TestCase\WPTestCase;
 
 /**

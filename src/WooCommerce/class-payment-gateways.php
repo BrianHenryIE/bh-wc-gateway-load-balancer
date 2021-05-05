@@ -12,8 +12,8 @@ namespace BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce;
 
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerAwareTrait;
-use BrianHenryIE\WC_Gateway_Load_Balancer\Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Payment_Gateways
