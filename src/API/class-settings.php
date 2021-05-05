@@ -30,7 +30,7 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	public function get_load_balance_config(): array {
 
 		$default = array(
-			'ratio' => array(),
+			'ratio' => array(), // An empty array of gateway:ratio.
 		);
 		$config  = get_option( 'bh_wc_gateway_load_balancer_config', $default );
 

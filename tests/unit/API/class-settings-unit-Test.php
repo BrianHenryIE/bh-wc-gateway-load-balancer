@@ -24,7 +24,7 @@ class Settings_Unit_Test extends Unit {
             'get_option',
             array(
                 'args'   => array( 'bh_wc_gateway_load_balancer_config', \WP_Mock\Functions::type( 'array' ) ),
-                'return' => array('ratio'=>array())
+                'return' => array( 'ratio'=> array() )
             )
         );
 
@@ -32,8 +32,26 @@ class Settings_Unit_Test extends Unit {
 
         $result = $sut->get_load_balance_config();
 
-        $this->assertIsArray(  $result );
+        $this->assertIsArray( $result );
         $this->assertEmpty( $result );
+    }
+
+    public function test_plugin_name() {
+
+        $sut = new Settings();
+
+        $result = $sut->get_plugin_name();
+
+        $this->assertEquals( 'Gateway Load Balancer', $result );
+    }
+
+    public function test_get_plugin_slug() {
+
+        $sut = new Settings();
+
+        $result = $sut->get_plugin_slug();
+
+        $this->assertEquals( 'bh-wc-gateway-load-balancer', $result );
     }
 
     public function test_get_loglevel_returns_notice_default() {
