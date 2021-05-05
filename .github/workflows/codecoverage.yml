@@ -77,7 +77,7 @@ jobs:
           | dir
 
       - name: Run unit tests
-        run: vendor/bin/codecept run unit --coverage unit.cov || true;
+        run: sudo vendor/bin/codecept run unit --coverage unit.cov || true;
 
       - name: Run wpunit tests
         run: vendor/bin/codecept run wpunit --coverage wpunit.cov || true;
