@@ -4,7 +4,7 @@
  *
  * @see wp-admin/admin.php?page=wc-settings&tab=checkout&section=bh_wc_gateway_load_balancer
  *
- * TODO: Add "recent totals" column.
+ * TODO: This view should indicate if the gateways are enabled.
  *
  * @link              https://BrianHenryIE.com
  * @since             1.0.0

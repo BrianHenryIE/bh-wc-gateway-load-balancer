@@ -64,7 +64,7 @@ class Order {
 		}
 
 		$payment_method_id = $order->get_payment_method();
-		$payment_amount    = floatval( $order->get_total() );
+		$payment_amount    = floatval( $order->get_total() ); // Typecast is not redundant.
 
 		$this->logger->info( "Recording payment amount {$payment_amount} for gateway {$payment_method_id}" );
 

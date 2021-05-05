@@ -88,11 +88,15 @@ class API implements API_Interface {
 	}
 
 	/**
-	 * Get a list of payment gateways and their order totals since the time specified.
+	 * Return an array of arrays, containing the recorded stats for each gateway id in the past time period.
 	 *
-	 * @param int $since_time Unix time to count order totals since.
+	 * @used-by API::get_existing_totals()
+	 * @used-by Payment_Gateways_UI::print_bh_wc_gateway_load_balancer_setting()
 	 *
-	 * @return array<string, float> The gateway_id and its summed total.
+	 * @see Settings::get_period()
+	 *
+	 * @param int $since_time Period of time in seconds to fetch saved recent totals. e.g. HOUR_IN_SECONDS or 3600. Up to the max returned from Settings::get_period().
+	 * @return array<string, array{count: int, total: float, oldest_time: int}> Keyed by gateway_id.
 	 */
 	protected function get_existing_totals( int $since_time ): array {
 
