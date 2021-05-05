@@ -8,6 +8,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer;
 
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\API;
 use BrianHenryIE\WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer;
 
 /**
@@ -22,7 +23,7 @@ class Plugin_Integration_Test extends \Codeception\TestCase\WPTestCase {
 
 		$this->assertArrayHasKey( 'bh_wc_gateway_load_balancer', $GLOBALS );
 
-		$this->assertInstanceOf( BH_WC_Gateway_Load_Balancer::class, $GLOBALS['bh_wc_gateway_load_balancer'] );
+		$this->assertInstanceOf( API::class, $GLOBALS['bh_wc_gateway_load_balancer'] );
 	}
 
 }
