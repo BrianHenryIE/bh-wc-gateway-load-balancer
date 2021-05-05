@@ -13,6 +13,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
+use BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce\Payment_Gateways_UI;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
@@ -98,11 +99,11 @@ class API implements API_Interface {
 	 * @param int $since_time Period of time in seconds to fetch saved recent totals. e.g. HOUR_IN_SECONDS or 3600. Up to the max returned from Settings::get_period().
 	 * @return array<string, array{count: int, total: float, oldest_time: int}> Keyed by gateway_id.
 	 */
-	protected function get_existing_totals( int $since_time ): array {
+	public function get_recent_totals_stats( int $since_time ): array {
 
 		$records = $this->get_saved_order_amounts();
 
-		$totals = array();
+		$stats = array();
 
 		foreach ( $records as $recorded_time => $details ) {
 
@@ -110,14 +111,42 @@ class API implements API_Interface {
 				continue;
 			}
 
-			$gateway_id = $details['gateway_id'];
-
-			if ( ! isset( $totals[ $gateway_id ] ) ) {
-				$totals[ $gateway_id ] = 0.0;
+			if ( ! isset( $stats[ $details['gateway_id'] ] ) ) {
+				$stats[ $details['gateway_id'] ] = array(
+					'count'       => 0,
+					'total'       => 0.0,
+					'oldest_time' => time(),
+				);
 			}
 
-			$totals[ $gateway_id ] += $details['amount'];
+			if ( $recorded_time < $stats[ $details['gateway_id'] ]['oldest_time'] ) {
+				$stats[ $details['gateway_id'] ]['oldest_time'] = $recorded_time;
+			}
 
+			$stats[ $details['gateway_id'] ]['count'] += 1;
+
+			$stats[ $details['gateway_id'] ]['total'] += $details['amount'];
+
+		}
+
+		return $stats;
+	}
+
+	/**
+	 * Get a list of payment gateways and their order totals since the time specified.
+	 *
+	 * @param int $since_time Unix time to count order totals since.
+	 *
+	 * @return array<string, float> The gateway_id and its summed total.
+	 */
+	protected function get_existing_totals( int $since_time ): array {
+
+		$stats = $this->get_recent_totals_stats( $since_time );
+
+		$totals = array();
+
+		foreach ( $stats as $gateway_id => $details ) {
+			$totals[ $gateway_id ] = $details['total'];
 		}
 
 		return $totals;

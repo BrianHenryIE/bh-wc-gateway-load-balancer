@@ -1,5 +1,6 @@
 <?php
 /**
+ * Set of functions that are central to the plugin's operation.
  *
  * @link              https://BrianHenryIE.com
  * @since             1.0.0
@@ -33,4 +34,16 @@ interface API_Interface {
 	 * @return string The chosen gateway id.
 	 */
 	public function determine_chosen_gateway( array $available_gateway_ratios ): string;
+
+	/**
+	 * Get recently recorded statistics for all gateways.
+	 *
+	 * This data is used internally in API to calculate the load balancing.
+	 * It is made public for display on the settings screen.
+	 *
+	 * @param int $since_time The unix time to count from. This must be more recent that Settings::get_period() which sets the expiry time for records.
+	 * @return array<string, array{count: int, total: float, oldest_time: int}> Keyed by gateway_id.
+	 */
+	public function get_recent_totals_stats( int $since_time ): array;
+
 }

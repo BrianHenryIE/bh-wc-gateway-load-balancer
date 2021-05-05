@@ -2,6 +2,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\WooCommerce;
 
+use BrianHenryIE\WC_Gateway_Load_Balancer\API\API_Interface;
 use BrianHenryIE\WC_Gateway_Load_Balancer\API\Settings_Interface;
 use Psr\Log\NullLogger;
 use Codeception\Test\Unit;
@@ -29,10 +30,11 @@ class Payment_Gateways_UI_Unit_Test extends Unit {
      */
     public function test_register_section() {
 
+        $api = $this->makeEmpty( API_Interface::class );
         $settings = $this->makeEmpty( Settings_Interface::class );
         $logger = new NullLogger();
 
-        $sut = new Payment_Gateways_UI( $settings, $logger );
+        $sut = new Payment_Gateways_UI( $api, $settings, $logger );
 
         $sections = array();
 
@@ -46,6 +48,8 @@ class Payment_Gateways_UI_Unit_Test extends Unit {
     public function test_add_js() {
 
         $version = '1.0.0';
+
+        $api = $this->makeEmpty( API_Interface::class );
 
         $settings = $this->makeEmpty( Settings_Interface::class,
         array(
@@ -75,7 +79,7 @@ class Payment_Gateways_UI_Unit_Test extends Unit {
             )
         );
 
-        $sut = new Payment_Gateways_UI( $settings, $logger );
+        $sut = new Payment_Gateways_UI( $api, $settings, $logger );
 
         $sut->add_checkbox_js();
     }

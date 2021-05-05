@@ -90,7 +90,7 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	 * @return string Semver version.
 	 */
 	public function get_plugin_version(): string {
-		return '1.0.0';
+		return '1.2.0';
 	}
 
 	/**

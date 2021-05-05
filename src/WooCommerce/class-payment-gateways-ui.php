@@ -37,17 +37,28 @@ class Payment_Gateways_UI {
 	protected Settings_Interface $settings;
 
 	/**
+	 * The plugin's settings.
+	 *
+	 * @var API_Interface
+	 */
+	protected API_Interface $api;
+
+	/**
 	 * Order constructor.
 	 *
+	 * @param API_Interface      $api Main plugin functions.
 	 * @param Settings_Interface $settings Plugin settings.
 	 * @param LoggerInterface    $logger PSR logger.
 	 */
-	public function __construct( Settings_Interface $settings, LoggerInterface $logger ) {
+	public function __construct( API_Interface $api, Settings_Interface $settings, LoggerInterface $logger ) {
 		$this->setLogger( $logger );
 		$this->settings = $settings;
+		$this->api      = $api;
 	}
 
 	/**
+	 * Register the horizontal section to display inside WooCommerce / Settings / Payments.
+	 *
 	 * @hooked woocommerce_get_sections_checkout
 	 * @see \WC_Settings_Payment_Gateways::get_sections()
 	 *
@@ -62,6 +73,10 @@ class Payment_Gateways_UI {
 	}
 
 	/**
+	 * The WooCommerce Settings API settings.
+	 * * Description
+	 * * Configuration table
+	 * * Log level
 	 *
 	 * @hooked woocommerce_get_settings_checkout
 	 * @see \WC_Settings_Payment_Gateways::get_settings()
@@ -153,15 +168,34 @@ class Payment_Gateways_UI {
 					<tr>
 						<?php
 						$default_columns = array(
-							'name'     => __( 'Method', 'bh-wc-gateway-load-balancer' ),
-							'included' => __( 'Included', 'bh-wc-gateway-load-balancer' ),
-							'ratio'    => __( 'Ratio', 'bh-wc-gateway-load-balancer' ),
+							'name'          => __( 'Method', 'bh-wc-gateway-load-balancer' ),
+							'included'      => __( 'Included', 'bh-wc-gateway-load-balancer' ),
+							'ratio'         => __( 'Ratio', 'bh-wc-gateway-load-balancer' ),
+							'recent_totals' => __( 'Recent totals', 'bh-wc-gateway-load-balancer' ),
 						);
 
 						$columns = apply_filters( 'bh_wc_gateway_load_balancer_setting_columns', $default_columns );
 
 						foreach ( $columns as $key => $column ) {
-							echo '<th class="' . esc_attr( $key ) . '">' . esc_html( $column ) . '</th>';
+
+							switch ( $key ) {
+								case 'recent_totals':
+									/**
+									 * Nicely display the time period.
+									 *
+									 * @see human_time_diff()
+									 * Then remove singular.
+									 * e.g. "1 day" to "day".
+									 */
+									$human_readable_period = human_time_diff( 0, $this->settings->get_period() );
+									$human_readable_period = preg_replace( '/^1 /', '', $human_readable_period ) ?? $human_readable_period;
+									echo '<th class="' . esc_attr( $key ) . '">' . esc_html( $column ) . ' (per ' . esc_html( $human_readable_period ) . ')</th>';
+
+									break;
+								default:
+									echo '<th class="' . esc_attr( $key ) . '">' . esc_html( $column ) . '</th>';
+									break;
+							}
 						}
 						?>
 					</tr>
@@ -179,6 +213,8 @@ class Payment_Gateways_UI {
 
 						$method_title = $gateway->get_method_title() ? $gateway->get_method_title() : $gateway->get_title();
 						$custom_title = $gateway->get_title();
+
+						$gateway_statistics = $this->api->get_recent_totals_stats( $this->settings->get_period() );
 
 						echo '<tr data-gateway_id="' . esc_attr( $gateway_id ) . '">';
 
@@ -247,7 +283,19 @@ class Payment_Gateways_UI {
 									/>
 									<?php
 									break;
+								case 'recent_totals':
+									if ( ! isset( $gateway_statistics[ $gateway_id ] ) ) {
+										break;
+									}
 
+									echo '<div>' . esc_html( wc_format_localized_price( "{$gateway_statistics[ $gateway_id ]['total']}" ) ) . '</div>>';
+
+									echo '<div>In ' . intval( $gateway_statistics[ $gateway_id ]['count'] ) . ' transactions. ';
+									echo 'Since ' . esc_html( date_i18n( get_option( 'date_format' ), $gateway_statistics[ $gateway_id ]['oldest_time'] ) ) . '.';
+
+									?>
+
+									<?php
 							}
 
 							echo '</td>';

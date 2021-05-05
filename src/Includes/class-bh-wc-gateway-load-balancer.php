@@ -76,6 +76,7 @@ class BH_WC_Gateway_Load_Balancer {
 		$this->define_order_hooks();
 		$this->define_payment_gateway_hooks();
 		$this->define_payment_gateway_ui_hooks();
+		$this->define_plugins_page_hooks();
 	}
 
 	/**
@@ -125,7 +126,7 @@ class BH_WC_Gateway_Load_Balancer {
 	 */
 	protected function define_payment_gateway_ui_hooks(): void {
 
-		$payment_gateways_ui = new Payment_Gateways_UI( $this->settings, $this->logger );
+		$payment_gateways_ui = new Payment_Gateways_UI( $this->api, $this->settings, $this->logger );
 
 		add_filter( 'woocommerce_get_sections_checkout', array( $payment_gateways_ui, 'add_settings_section' ) );
 		add_filter( 'woocommerce_get_settings_checkout', array( $payment_gateways_ui, 'get_settings' ), 10, 2 );
