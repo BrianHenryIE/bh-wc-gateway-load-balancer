@@ -72,6 +72,10 @@ jobs:
       - name: Run composer install
         uses: php-actions/composer@v1
 
+      - name: Print env
+        run: pwd
+          | dir
+
       - name: Run unit tests
         run: vendor/bin/codecept run unit --coverage unit.cov || true;
 
