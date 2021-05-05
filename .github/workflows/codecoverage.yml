@@ -94,9 +94,12 @@ jobs:
       - name: Edit phpcov html output to work with gh-pages
         run: |
           cd tests/_output/html
-          sudo mv .css css; find . -depth -name '*.html' -exec sed -i "s/.css\//css\//" {} +
+          ls
+          sudo mv .css css;
+          sudo find . -depth -name '*.html' -exec sed -i "s/.css\//css\//" {} +
           sudo mv .icons icons; find . -depth -name '*.html' -exec sed -i "s/.icons\//icons\//" {} +
-          sudo mv .js js; find . -depth -name '*.html' -exec sed -i "s/.js\//js\//" {} +
+          sudo mv .js js;
+          sudo find . -depth -name '*.html' -exec sed -i "s/.js\//js\//" {} +
           git add *
           cd ../../..
 
