@@ -288,10 +288,14 @@ class Payment_Gateways_UI {
 										break;
 									}
 
-									echo '<div>' . esc_html( wc_format_localized_price( "{$gateway_statistics[ $gateway_id ]['total']}" ) ) . '</div>>';
+									// TODO: Add currency symbol.
+									echo '<div>' . esc_html( get_woocommerce_currency_symbol() . wc_format_localized_price( "{$gateway_statistics[ $gateway_id ]['total']}" ) );
 
-									echo '<div>In ' . intval( $gateway_statistics[ $gateway_id ]['count'] ) . ' transactions. ';
-									echo 'Since ' . esc_html( date_i18n( get_option( 'date_format' ), $gateway_statistics[ $gateway_id ]['oldest_time'] ) ) . '.';
+									echo ' in ' . intval( $gateway_statistics[ $gateway_id ]['count'] ) . ' transactions. ';
+									// TODO: Add the time.
+									echo ' (oldest included transaction ' . esc_html(  date_i18n( 'G:i ' . get_option( 'date_format' ), $gateway_statistics[ $gateway_id ]['oldest_time'] ) ) . ').';
+
+									echo '</div>';
 
 									?>
 
