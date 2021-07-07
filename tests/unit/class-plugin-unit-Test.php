@@ -27,15 +27,15 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 		parent::_tearDown();
 		\WP_Mock::tearDown();
 	}
-	
+
 	/**
 	 * Verifies the plugin initialization.
 	 */
 	public function test_plugin_include() {
 
-        global $plugin_root_dir;
+		global $plugin_root_dir;
 
-        \WP_Mock::userFunction(
+		\WP_Mock::userFunction(
 			'plugin_dir_path',
 			array(
 				'args'   => array( \WP_Mock\Functions::type( 'string' ) ),
@@ -51,31 +51,31 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 			'register_deactivation_hook'
 		);
 
-        \WP_Mock::userFunction(
-            'is_admin',
-            array(
-                'return_arg' => false
-            )
-        );
+		\WP_Mock::userFunction(
+			'is_admin',
+			array(
+				'return_arg' => false,
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'get_current_user_id'
-        );
+		\WP_Mock::userFunction(
+			'get_current_user_id'
+		);
 
-        \WP_Mock::userFunction(
-            'wp_normalize_path',
-            array(
-                'return_arg' => true
-            )
-        );
+		\WP_Mock::userFunction(
+			'wp_normalize_path',
+			array(
+				'return_arg' => true,
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'get_option',
-            array(
-                'args' => array( 'bh_wc_gateway_load_balancer_log_level',  \WP_Mock\Functions::type( 'string' )),
-                'return' => 'notice'
-            )
-        );
+		\WP_Mock::userFunction(
+			'get_option',
+			array(
+				'args'   => array( 'bh_wc_gateway_load_balancer_log_level', \WP_Mock\Functions::type( 'string' ) ),
+				'return' => 'notice',
+			)
+		);
 
 		require_once $plugin_root_dir . '/bh-wc-gateway-load-balancer.php';
 
@@ -91,7 +91,7 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 	 */
 	public function test_plugin_include_no_output() {
 
-	    global $plugin_root_dir;
+		global $plugin_root_dir;
 
 		\WP_Mock::userFunction(
 			'plugin_dir_path',
@@ -109,23 +109,23 @@ class Plugin_Unit_Test extends \Codeception\Test\Unit {
 			'register_deactivation_hook'
 		);
 
-        \WP_Mock::userFunction(
-            'is_admin',
-            array(
-                'return_arg' => false
-            )
-        );
+		\WP_Mock::userFunction(
+			'is_admin',
+			array(
+				'return_arg' => false,
+			)
+		);
 
-        \WP_Mock::userFunction(
-            'get_current_user_id'
-        );
+		\WP_Mock::userFunction(
+			'get_current_user_id'
+		);
 
-        \WP_Mock::userFunction(
-            'wp_normalize_path',
-            array(
-                'return_arg' => true
-            )
-        );
+		\WP_Mock::userFunction(
+			'wp_normalize_path',
+			array(
+				'return_arg' => true,
+			)
+		);
 
 		ob_start();
 

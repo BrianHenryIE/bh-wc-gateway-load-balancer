@@ -10,7 +10,7 @@
 
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
-use BrianHenryIE\WC_Gateway_Load_Balancer\BrianHenryIE\WP_Logger\API\Logger_Settings_Interface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\WP_Logger\API\Logger_Settings_Interface;
 use Psr\Log\LogLevel;
 
 /**
@@ -90,7 +90,7 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	 * @return string Semver version.
 	 */
 	public function get_plugin_version(): string {
-		return '1.2.0';
+		return '1.3.0';
 	}
 
 	/**
@@ -101,5 +101,17 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	 */
 	public function get_period(): int {
 		return DAY_IN_SECONDS;
+	}
+
+	/**
+	 * Toogles whether to only consider "paid" orders, or to count every order created.
+	 *
+	 * @return bool
+	 */
+	public function get_should_count_all_new_orders(): bool {
+
+		$include = get_option( 'bh_wc_gateway_load_balancer_should_count_all_new_orders', 'no' ) === 'yes';
+
+		return $include;
 	}
 }

@@ -17,6 +17,7 @@ use WP_Mock\Matcher\AnyInstance;
 
 /**
  * Class BH_WC_Gateway_Load_Balancer_Unit_Test
+ *
  * @coversDefaultClass \BrianHenryIE\WC_Gateway_Load_Balancer\Includes\BH_WC_Gateway_Load_Balancer
  */
 class BH_WC_Gateway_Load_Balancer_Unit_Test extends \Codeception\Test\Unit {
@@ -30,12 +31,12 @@ class BH_WC_Gateway_Load_Balancer_Unit_Test extends \Codeception\Test\Unit {
 		\WP_Mock::tearDown();
 	}
 
-    /**
-     * @covers ::__construct
-     */
+	/**
+	 * @covers ::__construct
+	 */
 	public function test_construct() {
-	    $this->construct_sut();
-    }
+		$this->construct_sut();
+	}
 
 	/**
 	 * @covers ::set_locale
@@ -50,77 +51,91 @@ class BH_WC_Gateway_Load_Balancer_Unit_Test extends \Codeception\Test\Unit {
 		$this->construct_sut();
 	}
 
-    /**
-     * @covers ::define_order_hooks
-     */
+	/**
+	 * @covers ::define_order_hooks
+	 */
 	public function test_define_order_hooks() {
 
-        \WP_Mock::expectActionAdded(
-            'woocommerce_payment_complete',
-            array( new AnyInstance( Order::class ), 'update_gateways_running_totals' )
-        );
+		\WP_Mock::expectActionAdded(
+			'woocommerce_new_order',
+			array( new AnyInstance( Order::class ), 'update_running_totals_on_new_order' ),
+			10,
+			2
+		);
 
-        $this->construct_sut();
-    }
+		\WP_Mock::expectActionAdded(
+			'woocommerce_payment_complete',
+			array( new AnyInstance( Order::class ), 'update_running_totals_on_payment_complete' )
+		);
 
-    /**
-     * @covers ::define_payment_gateway_hooks
-     */
-    public function test_define_payment_gateway_hooks() {
+		\WP_Mock::expectActionAdded(
+			'woocommerce_order_status_changed',
+			array( new AnyInstance( Order::class ), 'update_running_totals_on_status_changed' ),
+			10,
+			4
+		);
 
-        \WP_Mock::expectFilterAdded(
-            'woocommerce_available_payment_gateways',
-            array( new AnyInstance( Payment_Gateways::class ), 'load_balance_gateways' ),
-            200,
-            1
-        );
+		$this->construct_sut();
+	}
 
-        $this->construct_sut();
-    }
+	/**
+	 * @covers ::define_payment_gateway_hooks
+	 */
+	public function test_define_payment_gateway_hooks() {
 
-    /**
-     * @covers ::define_payment_gateway_ui_hooks
-     */
-    public function test_define_payment_gateway_ui_hooks() {
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_available_payment_gateways',
+			array( new AnyInstance( Payment_Gateways::class ), 'load_balance_gateways' ),
+			200,
+			1
+		);
 
-        \WP_Mock::expectFilterAdded(
-            'woocommerce_get_sections_checkout',
-            array( new AnyInstance( Payment_Gateways_UI::class ), 'add_settings_section' )
-        );
+		$this->construct_sut();
+	}
 
-        \WP_Mock::expectFilterAdded(
-            'woocommerce_get_settings_checkout',
-            array( new AnyInstance( Payment_Gateways_UI::class ), 'get_settings' ),
-            10,
-            2
-        );
+	/**
+	 * @covers ::define_payment_gateway_ui_hooks
+	 */
+	public function test_define_payment_gateway_ui_hooks() {
 
-        \WP_Mock::expectActionAdded(
-            'woocommerce_admin_field_bh_wc_gateway_load_balancer',
-            array( new AnyInstance( Payment_Gateways_UI::class ), 'print_bh_wc_gateway_load_balancer_setting' )
-        );
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_get_sections_checkout',
+			array( new AnyInstance( Payment_Gateways_UI::class ), 'add_settings_section' )
+		);
 
-        \WP_Mock::expectFilterAdded(
-            'woocommerce_admin_settings_sanitize_option_bh_wc_gateway_load_balancer_config',
-            array( new AnyInstance( Payment_Gateways_UI::class ), 'process_config' ),
-            10,
-            3
-        );
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_get_settings_checkout',
+			array( new AnyInstance( Payment_Gateways_UI::class ), 'get_settings' ),
+			10,
+			2
+		);
 
-        \WP_Mock::expectActionAdded(
-            'admin_enqueue_scripts',
-            array( new AnyInstance( Payment_Gateways_UI::class ), 'add_checkbox_js' )
-        );
+		\WP_Mock::expectActionAdded(
+			'woocommerce_admin_field_bh_wc_gateway_load_balancer',
+			array( new AnyInstance( Payment_Gateways_UI::class ), 'print_bh_wc_gateway_load_balancer_setting' )
+		);
 
-        $this->construct_sut();
-    }
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_admin_settings_sanitize_option_bh_wc_gateway_load_balancer_config',
+			array( new AnyInstance( Payment_Gateways_UI::class ), 'process_config' ),
+			10,
+			3
+		);
+
+		\WP_Mock::expectActionAdded(
+			'admin_enqueue_scripts',
+			array( new AnyInstance( Payment_Gateways_UI::class ), 'add_checkbox_js' )
+		);
+
+		$this->construct_sut();
+	}
 
     /**
      * @covers ::define_plugins_page_hooks
      */
-    protected function test_plugins_page_hooks() {
+    public function test_plugins_page_hooks() {
 
-        \WP_Mock::expectActionAdded(
+        \WP_Mock::expectFilterAdded(
             'plugin_action_links_bh-wc-gateway-load-balancer/bh-wc-gateway-load-balancer.php',
             array( new AnyInstance( Plugins_Page::class ), 'action_links' )
         );
@@ -128,12 +143,12 @@ class BH_WC_Gateway_Load_Balancer_Unit_Test extends \Codeception\Test\Unit {
         $this->construct_sut();
     }
 
-    protected function construct_sut() {
+	protected function construct_sut() {
 
-        $api = $this->makeEmpty(API_Interface::class);
-        $settings = $this->makeEmpty( Settings_Interface::class );
-        $logger = new NullLogger();
+		$api      = $this->makeEmpty( API_Interface::class );
+		$settings = $this->makeEmpty( Settings_Interface::class );
+		$logger   = new NullLogger();
 
-        new BH_WC_Gateway_Load_Balancer( $api, $settings, $logger );
-    }
+		new BH_WC_Gateway_Load_Balancer( $api, $settings, $logger );
+	}
 }

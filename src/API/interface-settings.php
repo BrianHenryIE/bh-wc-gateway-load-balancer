@@ -34,4 +34,12 @@ interface Settings_Interface {
 	 * @return int
 	 */
 	public function get_period(): int;
+
+	/**
+	 * Should "paid" orders be counted or should all new orders be counted?
+	 *
+	 * @return bool
+	 */
+	public function get_should_count_all_new_orders(): bool;
+
 }

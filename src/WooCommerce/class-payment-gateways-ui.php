@@ -90,42 +90,53 @@ class Payment_Gateways_UI {
 
 		if ( 'bh_wc_gateway_load_balancer' === $current_section ) {
 
-				$settings[] = array(
-					'title'     => __( 'Load Balancing', 'bh-wc-gateway-load-balancer' ),
-					'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day. Only one gateway from the group will appear to customers at a time. Remaining gateways are unaffected.', 'bh-wc-gateway-load-balancer' ),
-					'type'      => 'title',
-					'id'        => 'bh_wc_gateway_load_balancer_options',
-					'is_option' => false,
-				);
+			$settings[] = array(
+				'title'     => __( 'Load Balancing', 'bh-wc-gateway-load-balancer' ),
+				'desc'      => __( 'Create a group of payment gateways and the ratio of orders\' total value that should be sent through each gateway per day. Only one gateway from the group will appear to customers at a time. Remaining gateways are unaffected.', 'bh-wc-gateway-load-balancer' ),
+				'type'      => 'title',
+				'id'        => 'bh_wc_gateway_load_balancer_options',
+				'is_option' => false,
+			);
 
-				$settings[] = array(
-					'id'   => 'bh_wc_gateway_load_balancer_config',
-					'type' => 'bh_wc_gateway_load_balancer',
-				);
+			$settings[] = array(
+				'title'    => __( 'Include all new orders', 'bh-wc-gateway-load-balancer' ),
+				'type'     => 'checkbox',
+				// TODO: Label is not working.
+				'label'    => __( 'Consider every order in calculations.', 'bh-wc-gateway-load-balancer' ),
+				'desc'     => __( 'Without this, only orders with WooCommerce\'s "paid" statuses (' . implode( ', ', wc_get_is_paid_statuses() ) . ') are counted.', 'bh-wc-gateway-load-balancer' ),
+				'desc_tip' => true,
+				'id'       => 'bh_wc_gateway_load_balancer_should_count_all_new_orders',
+				'default'  => 'no',
+			);
 
-				// TODO: Don't offer levels that aren't used by the plugin.
-				$log_levels        = array( 'none', LogLevel::ERROR, LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG );
-				$log_levels_option = array();
-				foreach ( $log_levels as $log_level ) {
-					$log_levels_option[ $log_level ] = ucfirst( $log_level );
-				}
+			$settings[] = array(
+				'id'   => 'bh_wc_gateway_load_balancer_config',
+				'type' => 'bh_wc_gateway_load_balancer',
+			);
 
-				$settings[] = array(
-					'title'    => __( 'Log Level', 'text-domain' ),
-					'label'    => __( 'Enable Logging', 'text-domain' ),
-					'type'     => 'select',
-					'options'  => $log_levels_option,
-					'desc'     => __( 'Increasingly detailed logging.', 'text-domain' ),
-					'desc_tip' => true,
-					'default'  => 'notice',
-					'id'       => 'bh_wc_gateway_load_balancer_log_level',
-				);
+			// TODO: Don't offer levels that aren't used by the plugin.
+			$log_levels        = array( 'none', LogLevel::ERROR, LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG );
+			$log_levels_option = array();
+			foreach ( $log_levels as $log_level ) {
+				$log_levels_option[ $log_level ] = ucfirst( $log_level );
+			}
 
-				$settings[] = array(
-					'type'      => 'sectionend',
-					'id'        => 'bh_wc_gateway_load_balancer_options',
-					'is_option' => false,
-				);
+			$settings[] = array(
+				'title'    => __( 'Log Level', 'bh-wc-gateway-load-balancer' ),
+				'label'    => __( 'Enable Logging', 'bh-wc-gateway-load-balancer' ),
+				'type'     => 'select',
+				'options'  => $log_levels_option,
+				'desc'     => __( 'Increasingly detailed logging.', 'bh-wc-gateway-load-balancer' ),
+				'desc_tip' => true,
+				'default'  => 'notice',
+				'id'       => 'bh_wc_gateway_load_balancer_log_level',
+			);
+
+			$settings[] = array(
+				'type'      => 'sectionend',
+				'id'        => 'bh_wc_gateway_load_balancer_options',
+				'is_option' => false,
+			);
 
 		}
 
@@ -151,6 +162,11 @@ class Payment_Gateways_UI {
 		 * @var array{included: array<string, string>, ratio: array<string, int>}
 		 */
 		$config = $value['value'];
+
+		// If it has not been saved yet, it is an empty string.
+		if ( empty( $config ) ) {
+			$config = array();
+		}
 
 		if ( ! isset( $config['included'] ) ) {
 			$config['included'] = array();
@@ -293,7 +309,7 @@ class Payment_Gateways_UI {
 
 									echo ' in ' . intval( $gateway_statistics[ $gateway_id ]['count'] ) . ' transactions. ';
 									// TODO: Add the time.
-									echo ' (oldest included transaction ' . esc_html(  date_i18n( 'G:i ' . get_option( 'date_format' ), $gateway_statistics[ $gateway_id ]['oldest_time'] ) ) . ').';
+									echo ' (oldest included transaction ' . esc_html( date_i18n( 'G:i ' . get_option( 'date_format' ), $gateway_statistics[ $gateway_id ]['oldest_time'] ) ) . ').';
 
 									echo '</div>';
 

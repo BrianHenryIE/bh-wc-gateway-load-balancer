@@ -73,10 +73,10 @@ class BH_WC_Gateway_Load_Balancer {
 
 		$this->set_locale();
 
+		$this->define_plugins_page_hooks();
 		$this->define_order_hooks();
 		$this->define_payment_gateway_hooks();
 		$this->define_payment_gateway_ui_hooks();
-		$this->define_plugins_page_hooks();
 	}
 
 	/**
@@ -96,15 +96,26 @@ class BH_WC_Gateway_Load_Balancer {
 	}
 
 	/**
+	 * Add a link to settings in plugins.php.
+	 */
+	protected function define_plugins_page_hooks(): void {
+		$plugins_page = new Plugins_Page();
+
+		add_filter( 'plugin_action_links_bh-wc-gateway-load-balancer/bh-wc-gateway-load-balancer.php', array( $plugins_page, 'action_links' ) );
+	}
+
+	/**
 	 * Register actions to record order values by gateway when orders are paid.
 	 *
 	 * @since    1.0.0
 	 */
 	protected function define_order_hooks(): void {
 
-		$order = new Order( $this->api, $this->logger );
+		$order = new Order( $this->api, $this->settings, $this->logger );
 
-		add_action( 'woocommerce_payment_complete', array( $order, 'update_gateways_running_totals' ) );
+		add_action( 'woocommerce_new_order', array( $order, 'update_running_totals_on_new_order' ), 10, 2 );
+		add_action( 'woocommerce_payment_complete', array( $order, 'update_running_totals_on_payment_complete' ) );
+		add_action( 'woocommerce_order_status_changed', array( $order, 'update_running_totals_on_status_changed' ), 10, 4 );
 	}
 
 	/**
@@ -135,12 +146,4 @@ class BH_WC_Gateway_Load_Balancer {
 		add_action( 'admin_enqueue_scripts', array( $payment_gateways_ui, 'add_checkbox_js' ) );
 	}
 
-	/**
-	 * Add a link to settings in plugins.php.
-	 */
-	protected function define_plugins_page_hooks(): void {
-		$plugins_page = new Plugins_Page();
-
-		add_filter( 'plugin_action_links_bh-wc-gateway-load-balancer/bh-wc-gateway-load-balancer.php', array( $plugins_page, 'action_links' ) );
-	}
 }

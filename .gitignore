@@ -38,19 +38,15 @@ intermediate
 .idea
 cache
 
-/vendor/
-
+node_modules
+scratch
+src/strauss/
+vendor/
 wordpress
-src/Mozart/
-src/strauss/*
-
 wp-content/
 
-scratch
-
-# Generated from GitHub Secrets in the workflows.
 .env.secret
 auth.json
-
 *.zip
 composer.lock
+
