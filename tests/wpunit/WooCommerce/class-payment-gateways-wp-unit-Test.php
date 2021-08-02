@@ -62,35 +62,84 @@ class Payment_Gateways_WP_Unit_Test extends WPTestCase {
 
 	}
 
+    /**
+     * When not on checkout, whatever is passed in should be returned unchanged.
+     *
+     * @covers ::load_balance_gateways
+     */
+    public function test_load_balance_gateways_not_on_checkout() {
+
+        $api      = $this->makeEmpty( API_Interface::class );
+        $settings = $this->makeEmpty( Settings_Interface::class );
+        $logger   = new NullLogger();
+
+        $sut = new Payment_Gateways( $api, $settings, $logger );
+
+        $available_gateways = array(
+            'gateway_1' => $this->make( \WC_Payment_Gateway::class ),
+            'gateway_2' => $this->make( \WC_Payment_Gateway::class ),
+        );
+
+        $result = $sut->load_balance_gateways( $available_gateways );
+
+        $this->assertArrayHasKey( 'gateway_1', $result );
+        $this->assertArrayHasKey( 'gateway_2', $result );
+
+    }
+
+
+    /**
+     * When "Place Order" has been clicked , whatever is passed in should be returned unchanged.
+     *
+     * @covers ::load_balance_gateways
+     */
+    public function test_load_balance_gateways_not_during_payment() {
+
+        $api = $this->makeEmpty(
+            API_Interface::class,
+            array(
+                'determine_chosen_gateway' => 'gateway_2',
+            )
+        );
+
+        $load_balance_config = array(
+            'gateway_2' => 6,
+            'gateway_3' => 4,
+        );
+        $settings            = $this->makeEmpty(
+            Settings_Interface::class,
+            array(
+                'get_load_balance_config' => $load_balance_config,
+            )
+        );
+
+        $logger = new NullLogger();
+
+        $sut = new Payment_Gateways( $api, $settings, $logger );
+
+        $available_gateways = array(
+            'gateway_1' => $this->make( \WC_Payment_Gateway::class ),
+            'gateway_2' => $this->make( \WC_Payment_Gateway::class ),
+            'gateway_3' => $this->make( \WC_Payment_Gateway::class ),
+        );
+
+        // Get is_checkout to return true.
+        add_filter( 'woocommerce_is_checkout', '__return_true' );
+
+        do_action('woocommerce_checkout_process' );
+
+        $result = $sut->load_balance_gateways( $available_gateways );
+
+        $this->assertArrayHasKey( 'gateway_1', $result );
+        $this->assertArrayHasKey( 'gateway_2', $result );
+        $this->assertArrayHasKey( 'gateway_3', $result );
+
+    }
+
+
+
 	/**
-	 * When not on checkout, whatever is passed in should be returned unchanged.
-	 *
-	 * @covers ::load_balance_gateways
-	 */
-	public function test_load_balance_gateways_not_on_checkout() {
-
-		$api      = $this->makeEmpty( API_Interface::class );
-		$settings = $this->makeEmpty( Settings_Interface::class );
-		$logger   = new NullLogger();
-
-		$sut = new Payment_Gateways( $api, $settings, $logger );
-
-		$available_gateways = array(
-			'gateway_1' => $this->make( \WC_Payment_Gateway::class ),
-			'gateway_2' => $this->make( \WC_Payment_Gateway::class ),
-		);
-
-		$result = $sut->load_balance_gateways( $available_gateways );
-
-		$this->assertArrayHasKey( 'gateway_1', $result );
-		$this->assertArrayHasKey( 'gateway_2', $result );
-
-	}
-
-
-
-	/**
-	 * When only one gateways is available, just return it.
+	 * When only one gateway is available, just return it.
 	 *
 	 * @covers ::load_balance_gateways
 	 */

@@ -72,6 +72,18 @@ class Payment_Gateways {
 			return $available_gateways;
 		}
 
+		/**
+		 * If the customer has pressed the "Place Order" button, make all gateways available. Otherwise a race
+		 * condition can occur between two customers who, when both loaded the page were presented with Gateway A,
+		 * then after one has completed the order, Gateway A is no longer returned by this filter when Customer B
+		 * clicks Place Order.
+		 *
+		 * @see \WC_Checkout::process_checkout()
+		 */
+		if ( did_action( 'woocommerce_checkout_process' ) ) {
+			return $available_gateways;
+		}
+
 		$gateways_proportion_config = $this->settings->get_load_balance_config();
 
 		/**

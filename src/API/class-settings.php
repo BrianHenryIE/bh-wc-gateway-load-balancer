@@ -1,6 +1,6 @@
 <?php
 /**
- * Plain object for accessing settings. Facade fro WooCommerce saved settings.
+ * Plain object for accessing settings. Facade for WooCommerce saved settings.
  *
  * @link              https://BrianHenryIE.com
  * @since             1.0.0
@@ -11,6 +11,7 @@
 namespace BrianHenryIE\WC_Gateway_Load_Balancer\API;
 
 use BrianHenryIE\WC_Gateway_Load_Balancer\WP_Logger\API\Logger_Settings_Interface;
+use BrianHenryIE\WC_Gateway_Load_Balancer\WP_Logger\WooCommerce\WooCommerce_Logger_Interface;
 use Psr\Log\LogLevel;
 
 /**
@@ -18,7 +19,7 @@ use Psr\Log\LogLevel;
  *
  * @package BrianHenryIE\WC_Gateway_Load_Balancer\API
  */
-class Settings implements Settings_Interface, Logger_Settings_Interface {
+class Settings implements Settings_Interface, Logger_Settings_Interface, WooCommerce_Logger_Interface {
 
 	/**
 	 * An array with payment gateway ids and the ratio they should be used.
@@ -90,7 +91,7 @@ class Settings implements Settings_Interface, Logger_Settings_Interface {
 	 * @return string Semver version.
 	 */
 	public function get_plugin_version(): string {
-		return '1.3.0';
+		return '1.3.1';
 	}
 
 	/**
